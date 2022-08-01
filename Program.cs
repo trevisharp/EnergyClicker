@@ -28,7 +28,7 @@ string format(double number, string type)
         number *= 1000;
         system--;
     }
-    while (number > 1000.0)
+    while (number >= 1000.0)
     {
         number /= 1000;
         system++;

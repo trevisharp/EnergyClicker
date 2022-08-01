@@ -7,7 +7,7 @@ public class Game
 {
     public List<Upgrade> Upgrades { get; private set; } = new List<Upgrade>();
 
-    public double Energy { get; set; } = 0.0;
+    public double Energy { get; set; } = 0;
 
     public float MaxAngularVelocity { get; set; } = 180f;
     public float Friction { get; set; } = 0.8f;
