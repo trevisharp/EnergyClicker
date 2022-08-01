@@ -1,15 +1,12 @@
 using System;
+using System.Linq;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 
-double energy = 0;
-
-// Energy Attributes
-float maxAngularVelocity = 180f;
-float friction = 0.75f;
-float enginePower = 1f / 1000 / 1000 / 1000;
-
+Game game = new Game();
+var upgrades = Upgrade.All.ToList();
 
 // Graphics Attributes
 int fps = 40;
@@ -53,7 +50,7 @@ float angularVelocity = 0f;
 
 void mainObjectRotation(Graphics g, Bitmap bmp)
 {
-    float frameVelocityKeep = (float)Math.Pow(1f - friction, 1f / fps);
+    float frameVelocityKeep = (float)Math.Pow(1f - game.Friction, 1f / fps);
     angularVelocity *= frameVelocityKeep;
     if (angularVelocity < 1f)
         angularVelocity = 0;
@@ -68,7 +65,7 @@ void mainObjectRotation(Graphics g, Bitmap bmp)
     RectangleF currentForceBar = new RectangleF(
             forceBar.X,
             forceBar.Y,
-            forceBar.Width * angularVelocity / maxAngularVelocity,
+            forceBar.Width * angularVelocity / game.MaxAngularVelocity,
             forceBar.Height
         );
     g.FillRectangle(brush, currentForceBar);
@@ -81,7 +78,7 @@ void drawInfo(Graphics g, Bitmap bmp)
     var production = getProduction();
     var strProduction = format(production, "W");
     addEnergy(production / fps);
-    var strEnergy = format(energy, "J");
+    var strEnergy = format(game.Energy, "J");
 
     rect = new RectangleF(
         bmp.Width / 2 - mainsize / 2 + 20, 
@@ -114,8 +111,10 @@ void drawMainObject(Graphics g, Bitmap bmp)
 
     var mainRect = new Rectangle(
         (int)(bmp.Width / 2 - mainsize / 2 - 50),
-        10, (int)(mainsize + 100), (int)(bmp.Height - 20));
-    g.FillRectangle(Brushes.LightGray, mainRect);
+        10, (int)(mainsize + 100), (int)(bmp.Height - 20)); 
+    LinearGradientBrush brush =new LinearGradientBrush(
+        mainRect, Color.White, Color.Gray, LinearGradientMode.Vertical);
+    g.FillRectangle(brush, mainRect);
     g.DrawRectangle(Pens.Black, mainRect);
 
     drawInfo(g, bmp);
@@ -133,25 +132,37 @@ bool mainObjectTestClick(Point p, Bitmap bmp)
 void mainObjectClick()
 {
     angularVelocity += clickForce;
-    if (angularVelocity > maxAngularVelocity)
-        angularVelocity = maxAngularVelocity;
+    if (angularVelocity > game.MaxAngularVelocity)
+        angularVelocity = game.MaxAngularVelocity;
 }
 
 
 // Energy System
 double getProduction()
 {
-    double engineProduction = angularVelocity / 360f * enginePower;
+    double engineProduction = angularVelocity / 360f * game.EnginePower;
     return engineProduction;
 }
 void addEnergy(double gain)
 {
-    energy += gain;
+    game.Energy += gain;
 }
 
 
 // Shop Implementation
 void drawShop(Graphics g, Bitmap bmp)
+{
+    int start = (int)(bmp.Width / 2 + mainsize / 2 + 60);
+    var shopRect = new Rectangle(start, 10, bmp.Width - start - 10, (int)(bmp.Height - 20));
+    LinearGradientBrush brush =new LinearGradientBrush(
+        shopRect, Color.Gray, Color.White, LinearGradientMode.Vertical);
+    g.FillRectangle(brush, shopRect);
+    g.DrawRectangle(Pens.Black, shopRect);
+    
+    drawUpgrades(g, bmp, upgrades);
+}
+
+void drawUpgrades(Graphics g, Bitmap bmp, List<Upgrade> upgrades)
 {
 
 }
