@@ -12,6 +12,8 @@ public class Game
     public float MaxAngularVelocity { get; set; } = 180f;
     public float Friction { get; set; } = 0.8f;
     public float EnginePower { get; set; } = 1f / 1000 / 1000 / 1000;
+    public float EngineAngularVelocity { get; set; } = 0f;
+    public int WorkerEfficience { get; set;} = -1;
 
     public bool Purchase(Upgrade upgrade)
     {
@@ -22,6 +24,25 @@ public class Game
         upgrade.Apply(this);
         this.Upgrades.Add(upgrade);
         return true;
+    }
+
+    public void Work(int frame)
+    {
+        if (WorkerEfficience == -1)
+            return;
+
+        int workDelay = 400 / WorkerEfficience;
+        if (frame % workDelay != 0)
+            return;
+
+        this.Click();
+    }
+
+    public void Click()
+    {
+        this.EngineAngularVelocity += 90;
+        if (this.EngineAngularVelocity > this.MaxAngularVelocity)
+            this.EngineAngularVelocity = this.MaxAngularVelocity;
     }
 }
 

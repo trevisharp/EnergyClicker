@@ -10,6 +10,7 @@ var upgrades = Upgrade.All.ToList();
 
 // Graphics Attributes
 int fps = 40;
+int frame = 0;
 Font font = SystemFonts.CaptionFont;
 StringFormat strFormat = new StringFormat();
 strFormat.Alignment = StringAlignment.Center;
@@ -44,17 +45,15 @@ string format(double number, string type)
 // Main Object Implementation
 Image main = null;
 float mainsize = 600f;
-float clickForce = 90f;
 float angle = 0f;
-float angularVelocity = 0f;
 
 void mainObjectRotation(Graphics g, Bitmap bmp)
 {
     float frameVelocityKeep = (float)Math.Pow(1f - game.Friction, 1f / fps);
-    angularVelocity *= frameVelocityKeep;
-    if (angularVelocity < 1f)
-        angularVelocity = 0;
-    angle += angularVelocity / fps;
+    game.EngineAngularVelocity *= frameVelocityKeep;
+    if (game.EngineAngularVelocity < 1f)
+        game.EngineAngularVelocity = 0;
+    angle += game.EngineAngularVelocity / fps;
     
     RectangleF forceBar = new RectangleF(
         bmp.Width / 2 - mainsize / 2 + 20, 
@@ -65,7 +64,7 @@ void mainObjectRotation(Graphics g, Bitmap bmp)
     RectangleF currentForceBar = new RectangleF(
             forceBar.X,
             forceBar.Y,
-            forceBar.Width * angularVelocity / game.MaxAngularVelocity,
+            forceBar.Width * game.EngineAngularVelocity / game.MaxAngularVelocity,
             forceBar.Height
         );
     g.FillRectangle(brush, currentForceBar);
@@ -131,18 +130,17 @@ bool mainObjectTestClick(Point p, Bitmap bmp)
 
 void mainObjectClick()
 {
-    angularVelocity += clickForce;
-    if (angularVelocity > game.MaxAngularVelocity)
-        angularVelocity = game.MaxAngularVelocity;
+    game.Click();
 }
 
 
 // Energy System
 double getProduction()
 {
-    double engineProduction = angularVelocity / 360f * game.EnginePower;
+    double engineProduction = game.EngineAngularVelocity / 360f * game.EnginePower;
     return engineProduction;
 }
+
 void addEnergy(double gain)
 {
     game.Energy += gain;
@@ -218,6 +216,7 @@ void drawUpgrades(Graphics g, Bitmap bmp, Point cursor, IEnumerable<Upgrade> upg
         y += hei + 10;
     }
 }
+
 void tryBuyUpgrade(Point p, Bitmap bmp)
 {
     int start = (int)(bmp.Width / 2 + mainsize / 2 + 60);
@@ -254,6 +253,8 @@ start(form =>
     tm.Interval = 1000 / fps;
     tm.Tick += delegate
     {
+        frame++;
+        game.Work(frame);
         g.Clear(Color.White);
         drawMainObject(g, bmp);
         drawShop(g, bmp, cursor);

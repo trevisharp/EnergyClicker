@@ -178,8 +178,8 @@ public class OilTen : Upgrade
         => game.Upgrades.Exists(u => u is OilNine);
 }
 
-public class Speed : Upgrade
-{    public Speed() : base(
+public class SpeedOne : Upgrade
+{    public SpeedOne() : base(
         "Eixo de cerâmica", 
         null, 
         "Dobra a velocidade máxima da sua engrenagem que poderá ter até 1 rpm.", 
@@ -196,12 +196,13 @@ public class Speed : Upgrade
 }
 
 public class SpeedTwo : Upgrade
-{    public SpeedTwo() : base(
+{    
+    public SpeedTwo() : base(
         "Eixo de acrílico", 
         null, 
         "Dobra a velocidade máxima da sua engrenagem que poderá ter até 2 rpm.", 
-        "Reunião Para Militar?", 
-        Joule.Nano(25)) { }
+        "Não rode muito pra não quebrar", 
+        Joule.Nano(50)) { }
     
     public override void Apply(Game game)
     {
@@ -209,7 +210,25 @@ public class SpeedTwo : Upgrade
     }
 
     public override bool Condition(Game game)
-        => game.Upgrades.Exists(u => u is Speed);
+        => game.Upgrades.Exists(u => u is SpeedOne);
+}
+
+public class SpeedThree : Upgrade
+{    
+    public SpeedThree() : base(
+        "Eixo de ossos de vaca", 
+        null, 
+        "Dobra a velocidade máxima da sua engrenagem que poderá ter até 3 rpm.", 
+        "Cruel... Porém eficiente", 
+        Joule.Nano(250)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.MaxAngularVelocity *= 2;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is SpeedThree);
 }
 
 public class ImproveEngine : Upgrade
@@ -224,6 +243,24 @@ public class ImproveEngine : Upgrade
     public override void Apply(Game game)
     {
         game.EnginePower *= 10;
+    }
+
+    public override bool Condition(Game game)
+        => true;
+}
+
+public class WorkerOne : Upgrade
+{
+    public WorkerOne() : base(
+        "Bob", 
+        null, 
+        "Contrata Bob como seu escravo. Bob gira a roda pra você... a cada 10 segundos.", 
+        "Bob não liga. Bob só quer rodar", 
+        Joule.Nano(50)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.WorkerEfficience = 1;
     }
 
     public override bool Condition(Game game)
