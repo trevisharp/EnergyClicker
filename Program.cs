@@ -150,6 +150,7 @@ void addEnergy(double gain)
 
 
 // Shop Implementation
+int shopScroll = 0;
 void drawShop(Graphics g, Bitmap bmp)
 {
     int start = (int)(bmp.Width / 2 + mainsize / 2 + 60);
@@ -159,12 +160,29 @@ void drawShop(Graphics g, Bitmap bmp)
     g.FillRectangle(brush, shopRect);
     g.DrawRectangle(Pens.Black, shopRect);
     
-    drawUpgrades(g, bmp, upgrades);
+    drawUpgrades(g, bmp, upgrades.Where(u => u.Condition(game)));
 }
 
-void drawUpgrades(Graphics g, Bitmap bmp, List<Upgrade> upgrades)
+void drawUpgrades(Graphics g, Bitmap bmp, IEnumerable<Upgrade> upgrades)
 {
+    int y = 20;
+    int x = (int)(bmp.Width / 2 + mainsize / 2 + 60 + 10);
+    int wid = bmp.Width - x - 20;
+    int hei = 100;
+    foreach (var upgrade in upgrades)
+    {
+        var upgradeRect = new Rectangle(x, y, wid, hei);
 
+        LinearGradientBrush brush =new LinearGradientBrush(
+            upgradeRect, Color.FromArgb(180, 140, 100), 
+            Color.FromArgb(180, 180, 100), LinearGradientMode.Horizontal);
+        g.FillRectangle(brush, upgradeRect);
+        g.DrawRectangle(Pens.Black, upgradeRect);
+
+        g.DrawString(upgrade.Name, font, Brushes.Black, upgradeRect, strFormat);
+
+        y += hei + 10;
+    }
 }
 
 // Screen Implementation
