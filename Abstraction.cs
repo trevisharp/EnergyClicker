@@ -15,10 +15,10 @@ public class Game
 
     public bool Purchase(Upgrade upgrade)
     {
-        if (this.Energy < upgrade.Value)
+        if (this.Energy < upgrade.Price)
             return false;
         
-        this.Energy -= upgrade.Value;
+        this.Energy -= upgrade.Price;
         upgrade.Apply(this);
         this.Upgrades.Add(upgrade);
         return true;
@@ -45,7 +45,7 @@ public abstract class Upgrade
     {
         this.Name = name;
         this.ImageName = image;
-        this.Value = value;
+        this.Price = value;
         this.Text = text;
         this.Commentary = commentary;
     }
@@ -54,7 +54,7 @@ public abstract class Upgrade
     public string ImageName { get; set; }
     public string Text { get; set;}
     public string Commentary { get; set; }
-    public double Value { get; set; }
+    public double Price { get; set; }
 
     private Image image = null;
     public Image Image

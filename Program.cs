@@ -151,7 +151,8 @@ void addEnergy(double gain)
 
 // Shop Implementation
 int shopScroll = 0;
-void drawShop(Graphics g, Bitmap bmp)
+Point? shopMouseClick = null;
+void drawShop(Graphics g, Bitmap bmp, Point cursor)
 {
     int start = (int)(bmp.Width / 2 + mainsize / 2 + 60);
     var shopRect = new Rectangle(start, 10, bmp.Width - start - 10, (int)(bmp.Height - 20));
@@ -160,10 +161,11 @@ void drawShop(Graphics g, Bitmap bmp)
     g.FillRectangle(brush, shopRect);
     g.DrawRectangle(Pens.Black, shopRect);
     
-    drawUpgrades(g, bmp, upgrades.Where(u => u.Condition(game)));
+    drawUpgrades(g, bmp, cursor, upgrades.Where(
+        u => u.Condition(game) && !game.Upgrades.Contains(u)));
 }
 
-void drawUpgrades(Graphics g, Bitmap bmp, IEnumerable<Upgrade> upgrades)
+void drawUpgrades(Graphics g, Bitmap bmp, Point cursor, IEnumerable<Upgrade> upgrades)
 {
     int y = 20;
     int x = (int)(bmp.Width / 2 + mainsize / 2 + 60 + 10);
@@ -173,16 +175,45 @@ void drawUpgrades(Graphics g, Bitmap bmp, IEnumerable<Upgrade> upgrades)
     {
         var upgradeRect = new Rectangle(x, y, wid, hei);
 
-        LinearGradientBrush brush =new LinearGradientBrush(
+        if (shopMouseClick != null && upgradeRect.Contains(shopMouseClick.Value))
+        {
+            shopMouseClick = null;
+            game.Purchase(upgrade);
+        }
+
+        LinearGradientBrush brush = new LinearGradientBrush(
             upgradeRect, Color.FromArgb(180, 140, 100), 
             Color.FromArgb(180, 180, 100), LinearGradientMode.Horizontal);
         g.FillRectangle(brush, upgradeRect);
-        g.DrawRectangle(Pens.Black, upgradeRect);
+        if (upgradeRect.Contains(cursor))
+            g.DrawRectangle(Pens.White, upgradeRect);
+        else g.DrawRectangle(Pens.Black, upgradeRect);
 
-        g.DrawString(upgrade.Name, font, Brushes.Black, upgradeRect, strFormat);
+        var title = new Rectangle(x, y, wid, 20);
+        if (upgradeRect.Contains(cursor))
+            g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.White, title);
+        else g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.Black, title);
+
+        var price = new Rectangle(x, y + 20, wid, 20);
+        g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.Orange, price);
+
+        var commnetary = new Rectangle(x, y + 40, wid, 25);
+        var italicFont = new Font(SystemFonts.CaptionFont, FontStyle.Italic);
+        g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.LightGray, commnetary);
+
+        var mainText = new Rectangle(x, y + 65, wid, hei - 60);
+        g.DrawString(upgrade.Text, SystemFonts.DialogFont, Brushes.Black, mainText);
 
         y += hei + 10;
     }
+}
+void tryBuyUpgrade(Point p, Bitmap bmp)
+{
+    int start = (int)(bmp.Width / 2 + mainsize / 2 + 60);
+    var shopRect = new Rectangle(start, 10, bmp.Width - start - 10, (int)(bmp.Height - 20));
+    if (!shopRect.Contains(p))
+        return;
+    shopMouseClick = p;
 }
 
 // Screen Implementation
@@ -206,13 +237,15 @@ start(form =>
     Bitmap bmp = null;
     Graphics g = null;
 
+    Point cursor = Point.Empty;
+
     Timer tm = new Timer();
     tm.Interval = 1000 / fps;
     tm.Tick += delegate
     {
         g.Clear(Color.White);
         drawMainObject(g, bmp);
-        drawShop(g, bmp);
+        drawShop(g, bmp, cursor);
         pb.Refresh();
     };
 
@@ -239,5 +272,11 @@ start(form =>
         {
             mainObjectClick();
         }
+        tryBuyUpgrade(e.Location, bmp);
+    };
+
+    pb.MouseMove += (o, e) =>
+    {
+        cursor = e.Location;
     };
 });
