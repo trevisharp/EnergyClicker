@@ -174,6 +174,7 @@ void drawUpgrades(Graphics g, Bitmap bmp, Point cursor, IEnumerable<Upgrade> upg
     foreach (var upgrade in upgrades)
     {
         var upgradeRect = new Rectangle(x, y, wid, hei);
+        bool canBuy = upgrade.Price <= game.Energy;
 
         if (shopMouseClick != null && upgradeRect.Contains(shopMouseClick.Value))
         {
@@ -181,27 +182,37 @@ void drawUpgrades(Graphics g, Bitmap bmp, Point cursor, IEnumerable<Upgrade> upg
             game.Purchase(upgrade);
         }
 
+        var colorA = canBuy ? Color.FromArgb(180, 140, 100) : Color.FromArgb(90, 70, 50);
+        var colorB = canBuy ? Color.FromArgb(180, 180, 100) : Color.FromArgb(90, 90, 50);
+
         LinearGradientBrush brush = new LinearGradientBrush(
-            upgradeRect, Color.FromArgb(180, 140, 100), 
-            Color.FromArgb(180, 180, 100), LinearGradientMode.Horizontal);
+            upgradeRect, colorA, colorB, LinearGradientMode.Horizontal);
         g.FillRectangle(brush, upgradeRect);
-        if (upgradeRect.Contains(cursor))
+        if (!canBuy)
+            g.DrawRectangle(Pens.Gray, upgradeRect);
+        else if (upgradeRect.Contains(cursor))
             g.DrawRectangle(Pens.White, upgradeRect);
         else g.DrawRectangle(Pens.Black, upgradeRect);
 
-        var title = new Rectangle(x, y, wid, 20);
-        if (upgradeRect.Contains(cursor))
+        var title = new Rectangle(x, y, wid, 25);
+        if (!canBuy)
+            g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.Gray, title);
+        else if (upgradeRect.Contains(cursor))
             g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.White, title);
         else g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.Black, title);
 
-        var price = new Rectangle(x, y + 20, wid, 20);
-        g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.Orange, price);
+        var price = new Rectangle(x + 50, y + 20, wid, 20);
+        if (!canBuy)
+            g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.DarkOrange, price);
+        else g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.Orange, price);
 
-        var commnetary = new Rectangle(x, y + 40, wid, 25);
+        var commnetary = new Rectangle(x + 50, y + 40, wid, 25);
         var italicFont = new Font(SystemFonts.CaptionFont, FontStyle.Italic);
-        g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.LightGray, commnetary);
+        if (!canBuy)
+            g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.Gray, commnetary);
+        else g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.LightGray, commnetary);
 
-        var mainText = new Rectangle(x, y + 65, wid, hei - 60);
+        var mainText = new Rectangle(x + 50, y + 65, wid, hei - 60);
         g.DrawString(upgrade.Text, SystemFonts.DialogFont, Brushes.Black, mainText);
 
         y += hei + 10;
