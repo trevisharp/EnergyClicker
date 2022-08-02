@@ -217,18 +217,18 @@ void drawUpgrade(Upgrade upgrade, bool canBuy, Rectangle upgradeRect,
         g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.White, title);
     else g.DrawString(upgrade.Name, SystemFonts.MenuFont, Brushes.Black, title);
 
-    var price = new Rectangle(x + 50, y + 20, wid, 20);
+    var price = new Rectangle(x + 90, y + 20, wid - 90, 20);
     if (!canBuy)
         g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.DarkOrange, price);
     else g.DrawString(format(upgrade.Price, "J"), SystemFonts.MenuFont, Brushes.Orange, price);
 
-    var commnetary = new Rectangle(x + 50, y + 40, wid, 25);
+    var commnetary = new Rectangle(x + 90, y + 40, wid - 90, 25);
     var italicFont = new Font(SystemFonts.CaptionFont, FontStyle.Italic);
     if (!canBuy)
         g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.Gray, commnetary);
     else g.DrawString($"\"{upgrade.Commentary}\"", italicFont, Brushes.LightGray, commnetary);
 
-    var mainText = new Rectangle(x + 50, y + 65, wid, hei - 60);
+    var mainText = new Rectangle(x + 90, y + 65, wid - 90, hei - 60);
     g.DrawString(upgrade.Text, SystemFonts.DialogFont, Brushes.Black, mainText);
 }
 
