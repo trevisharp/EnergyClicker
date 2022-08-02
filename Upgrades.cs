@@ -3,7 +3,7 @@ public class OilOne : Upgrade
     public OilOne() : base(
         "Gotinhazinha de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 80% para 55%. Ela vai parar de girar mais devagar agora.", 
+        "Diminui o atrito da engrenagem de 95% para 70%. Ela vai parar de girar mais devagar agora.", 
         "Um pouco de óleo não faz mal a ninguém", 
         Joule.Nano(5)) { }
     
@@ -21,7 +21,7 @@ public class OilTwo : Upgrade
     public OilTwo() : base(
         "Duas gotinhas de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 55% para 35%.", 
+        "Diminui o atrito da engrenagem de 70% para 50%.", 
         "Tão fluído como um fidget spinner paraguaio", 
         Joule.Nano(10)) { }
     
@@ -39,13 +39,13 @@ public class OilThree : Upgrade
     public OilThree() : base(
         "Três gotas de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 35% para 20%.", 
+        "Diminui o atrito da engrenagem de 50% para 30%.", 
         "Suuuuuaaaaveeeeee", 
         Joule.Nano(30)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .15f;
+        game.Friction -= .20f;
     }
 
     public override bool Condition(Game game)
@@ -57,7 +57,7 @@ public class OilFour : Upgrade
     public OilFour() : base(
         "quatro gotonas de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 20% para 10%.", 
+        "Diminui o atrito da engrenagem de 30% para 20%.", 
         "Alguém está escutando a música do roda a roda?", 
         Joule.Nano(120)) { }
     
@@ -75,13 +75,13 @@ public class OilFive : Upgrade
     public OilFive() : base(
         "Um balde de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 10% para 5%.", 
+        "Diminui o atrito da engrenagem de 20% para 10%.", 
         "Isso está saindo do controle, não?", 
         Joule.Nano(600)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .05f;
+        game.Friction -= .1f;
     }
 
     public override bool Condition(Game game)
@@ -91,9 +91,9 @@ public class OilFive : Upgrade
 public class OilSix : Upgrade
 {
     public OilSix() : base(
-        "Seis banheiras", 
+        "Seis banheiras de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 5% para 2%.", 
+        "Diminui o atrito da engrenagem de 10% para 7%.", 
         "Proibido fumar perto da engrenagem", 
         Joule.Micro(3.6)) { }
     
@@ -111,13 +111,13 @@ public class OilSeven : Upgrade
     public OilSeven() : base(
         "Sete piscinas de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 2% para 1%.", 
+        "Diminui o atrito da engrenagem de 7% para 4%.", 
         "Quanto óleo você quer na sua engrenagem? Sim", 
         Joule.Micro(25.2)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .01f;
+        game.Friction -= .03f;
     }
 
     public override bool Condition(Game game)
@@ -129,13 +129,13 @@ public class OilEight : Upgrade
     public OilEight() : base(
         "Oito diluvios de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 1% para 0.5%.", 
+        "Diminui o atrito da engrenagem de 4% para 2.5%.", 
         "Quanto óleo você quer na sua engrenagem? Sim", 
         Joule.Micro(201.6)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .005f;
+        game.Friction -= .015f;
     }
 
     public override bool Condition(Game game)
@@ -147,13 +147,13 @@ public class OilNine : Upgrade
     public OilNine() : base(
         "Nove mares de óleo", 
         null, 
-        "Diminui o atrito da engrenagem de 0.5% para 0.2%.", 
+        "Diminui o atrito da engrenagem de 2.5% para 1%.", 
         "Não eram 7 mares?", 
         Joule.Milli(1.8144)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .003f;
+        game.Friction -= .015f;
     }
 
     public override bool Condition(Game game)
@@ -165,13 +165,13 @@ public class OilTen : Upgrade
     public OilTen() : base(
         "Moto perpétuo", 
         null, 
-        "Diminui o atrito da engrenagem de 0.2% para 0%.", 
+        "Diminui o atrito da engrenagem de 1% para 0,5%.", 
         "Pera... Então não precisa mais clicar?", 
         Joule.Milli(1.8144)) { }
     
     public override void Apply(Game game)
     {
-        game.Friction -= .002f;
+        game.Friction -= .005f;
     }
 
     public override bool Condition(Game game)
@@ -256,13 +256,85 @@ public class WorkerOne : Upgrade
         null, 
         "Contrata Bob como seu escravo. Bob gira a roda pra você... a cada 10 segundos.", 
         "Bob não liga. Bob só quer rodar", 
-        Joule.Nano(50)) { }
+        Joule.Nano(1)) { }
     
     public override void Apply(Game game)
     {
-        game.WorkerEfficience = 1;
+        game.WorkerEfficience += 1;
     }
 
     public override bool Condition(Game game)
         => true;
+}
+
+public class WorkerTwo : Upgrade
+{
+    public WorkerTwo() : base(
+        "Brad", 
+        null, 
+        "Contrata Brad como seu escravo. Brad gira a roda pra você a cada 10 segundos, alternando com Bob", 
+        "É o Brad!", 
+        Joule.Nano(4)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.WorkerEfficience += 2;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is WorkerOne);
+}
+
+public class WorkerThree : Upgrade
+{
+    public WorkerThree() : base(
+        "Billy e Jim", 
+        null, 
+        "Contrata Billy e Jean como seus escravos. Eles giram a roda junto de Bob e Brad.", 
+        "Isso está ficando divertido", 
+        Joule.Nano(10)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.WorkerEfficience += 2;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is WorkerTwo);
+}
+
+public class WorkerFour : Upgrade
+{
+    public WorkerFour() : base(
+        "Mandy", 
+        null, 
+        "Dobra a eficiência dos seus trabalhadores.", 
+        "Mandy não roda, mas ela grita a beça", 
+        Joule.Nano(15)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.WorkerEfficience *= 2;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is WorkerThree);
+}
+
+public class WorkerFive : Upgrade
+{
+    public WorkerFive() : base(
+        "Chicote", 
+        null, 
+        "Dobra a eficiência dos seus trabalhadores.", 
+        "Mandy adorou seu novo presentinho", 
+        Joule.Nano(30)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.WorkerEfficience *= 2;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is WorkerFour);
 }

@@ -10,10 +10,10 @@ public class Game
     public double Energy { get; set; } = 0;
 
     public float MaxAngularVelocity { get; set; } = 180f;
-    public float Friction { get; set; } = 0.8f;
+    public float Friction { get; set; } = 0.95f;
     public float EnginePower { get; set; } = 1f / 1000 / 1000 / 1000;
     public float EngineAngularVelocity { get; set; } = 0f;
-    public int WorkerEfficience { get; set;} = -1;
+    public int WorkerEfficience { get; set;} = 0;
 
     public bool Purchase(Upgrade upgrade)
     {
@@ -28,7 +28,7 @@ public class Game
 
     public void Work(int frame)
     {
-        if (WorkerEfficience == -1)
+        if (WorkerEfficience == 0)
             return;
 
         int workDelay = 400 / WorkerEfficience;
@@ -40,7 +40,7 @@ public class Game
 
     public void Click()
     {
-        this.EngineAngularVelocity += 90;
+        this.EngineAngularVelocity += 45;
         if (this.EngineAngularVelocity > this.MaxAngularVelocity)
             this.EngineAngularVelocity = this.MaxAngularVelocity;
     }
