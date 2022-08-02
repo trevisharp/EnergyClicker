@@ -74,9 +74,9 @@ void mainObjectRotation(Graphics g, Bitmap bmp)
 void drawInfo(Graphics g, Bitmap bmp)
 {
     RectangleF rect;
-    var production = getProduction();
+    var production = game.GetProduction();
     var strProduction = format(production, "W");
-    addEnergy(production / fps);
+    game.Energy += production / fps;
     var strEnergy = format(game.Energy, "J");
 
     rect = new RectangleF(
@@ -131,19 +131,6 @@ bool mainObjectTestClick(Point p, Bitmap bmp)
 void mainObjectClick()
 {
     game.Click();
-}
-
-
-// Energy System
-double getProduction()
-{
-    double engineProduction = game.EngineAngularVelocity / 360f * game.EnginePower;
-    return engineProduction;
-}
-
-void addEnergy(double gain)
-{
-    game.Energy += gain;
 }
 
 

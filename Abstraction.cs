@@ -44,6 +44,22 @@ public class Game
         if (this.EngineAngularVelocity > this.MaxAngularVelocity)
             this.EngineAngularVelocity = this.MaxAngularVelocity;
     }
+
+    public double GetProduction()
+    {
+        double engineProduction = this.EngineAngularVelocity / 360f * this.EnginePower;
+        return engineProduction;
+    }
+
+    public void Save()
+    {
+
+    }
+
+    public void Load()
+    {
+
+    }
 }
 
 public abstract class Upgrade

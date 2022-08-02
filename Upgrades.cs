@@ -179,6 +179,7 @@ public class OilTen : Upgrade
         => game.Upgrades.Exists(u => u is OilNine);
 }
 
+//Speed Upgrades
 public class SpeedOne : Upgrade
 {    public SpeedOne() : base(
         "Eixo de cerâmica", 
@@ -201,13 +202,13 @@ public class SpeedTwo : Upgrade
     public SpeedTwo() : base(
         "Eixo de acrílico", 
         null, 
-        "Dobra a velocidade máxima da sua engrenagem que poderá ter até 2 rpm.", 
+        "Aumenta a velocidade máxima da sua engrenagem que poderá ter até 2 rpm.", 
         "Não rode muito pra não quebrar", 
         Joule.Nano(50)) { }
     
     public override void Apply(Game game)
     {
-        game.MaxAngularVelocity *= 2;
+        game.MaxAngularVelocity += 1;
     }
 
     public override bool Condition(Game game)
@@ -219,18 +220,37 @@ public class SpeedThree : Upgrade
     public SpeedThree() : base(
         "Eixo de ossos de vaca", 
         null, 
-        "Dobra a velocidade máxima da sua engrenagem que poderá ter até 3 rpm.", 
+        "Aumenta a velocidade máxima da sua engrenagem que poderá ter até 3 rpm.", 
         "Cruel... Porém eficiente", 
         Joule.Nano(250)) { }
     
     public override void Apply(Game game)
     {
-        game.MaxAngularVelocity *= 2;
+        game.MaxAngularVelocity += 1;
     }
 
     public override bool Condition(Game game)
         => game.Upgrades.Exists(u => u is SpeedThree);
 }
+
+public class SpeedFour : Upgrade
+{    
+    public SpeedFour() : base(
+        "Eixo de liga de ferro", 
+        null, 
+        "Aumenta a velocidade máxima da sua engrenagem que poderá ter até 4 rpm.", 
+        "É uma liga questionável, mas funciona bem.", 
+        Joule.Nano(250)) { }
+    
+    public override void Apply(Game game)
+    {
+        game.MaxAngularVelocity += 1;
+    }
+
+    public override bool Condition(Game game)
+        => game.Upgrades.Exists(u => u is SpeedThree);
+}
+
 
 
 //Engine Upgrades
@@ -275,9 +295,9 @@ public class ImproveEngineTwo : Upgrade
 public class WorkerOne : Upgrade
 {
     public WorkerOne() : base(
-        "Bob", 
+        "Escravo Bob", 
         null, 
-        "Contrata Bob como seu escravo. Bob gira a roda pra você... a cada 10 segundos.", 
+        "Adiciona 1 a eficiência dos seus trabalhadores. Trabalhadores rodam a roda para você a cada 10 segundos.", 
         "Bob não liga. Bob só quer rodar", 
         Joule.Nano(1)) { }
     
@@ -293,15 +313,15 @@ public class WorkerOne : Upgrade
 public class WorkerTwo : Upgrade
 {
     public WorkerTwo() : base(
-        "Brad", 
+        "Escravo Brad", 
         null, 
-        "Contrata Brad como seu escravo. Brad gira a roda pra você a cada 10 segundos, alternando com Bob", 
+        "Adiciona 1 a eficiência dos seus trabalhadores.", 
         "É o Brad!", 
         Joule.Nano(2)) { }
     
     public override void Apply(Game game)
     {
-        game.WorkerEfficience += 2;
+        game.WorkerEfficience += 1;
     }
 
     public override bool Condition(Game game)
@@ -313,7 +333,7 @@ public class WorkerThree : Upgrade
     public WorkerThree() : base(
         "Billy e Jim", 
         null, 
-        "Contrata Billy e Jean como seus escravos. Eles giram a roda junto de Bob e Brad.", 
+        "Adiciona 2 a eficiência dos seus trabalhadores.", 
         "Isso está ficando divertido", 
         Joule.Nano(6)) { }
     
@@ -404,7 +424,7 @@ public class WorkerEight : Upgrade
         "Material Ilícito", 
         null, 
         "Dobra a eficiência dos seus trabalhadores.", 
-        "O chá da amanda está diferente... Mas melhor.", 
+        "O chá da amanda está diferente... Porém está melhor.", 
         Joule.Micro(40)) { }
     
     public override void Apply(Game game)
