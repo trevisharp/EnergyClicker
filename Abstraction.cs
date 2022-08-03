@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Drawing;
 using System;
+using System.Windows.Forms;
 
 public class Game
 {
@@ -53,12 +54,36 @@ public class Game
 
     public void Save()
     {
-
+        CompactSerializer serializer = new CompactSerializer();
+        string data = serializer.Serialize(this);
+        Clipboard.SetText(data);
     }
 
-    public void Load()
+    public bool Load()
     {
+        try
+        {
+            var data = Clipboard.GetText();
+            CompactSerializer serializer = new CompactSerializer();
 
+            if (!serializer.Validate(data))
+                return false;
+
+            this.Energy = 0;
+            this.MaxAngularVelocity = 180f;
+            this.Friction = 0.95f;
+            this.EnginePower = 1f / 1000 / 1000 / 1000;
+            this.EngineAngularVelocity = 0f;
+            this.WorkerEfficience = 0;
+            this.Upgrades.Clear();
+
+            serializer.Deserialize(this, data);
+        }
+        catch
+        {
+            return false;
+        }
+        return true;
     }
 }
 

@@ -8,6 +8,9 @@ using System.Collections.Generic;
 Game game = new Game();
 var upgrades = Upgrade.All.ToList();
 
+// Configurations
+Configuration.EnableSTAThread();
+
 // Graphics Attributes
 int fps = 40;
 int frame = 0;
@@ -229,6 +232,109 @@ void tryBuyUpgrade(Point p, Bitmap bmp)
 }
 
 
+// Options Implementation
+bool optionsOpened = false;
+Bitmap optionsTexture = null;
+bool OptmouseInDown = false;
+bool Optclick = false;
+void drawButtonAndScreen(Graphics g, Bitmap bmp, Point cursor, bool down)
+{
+    if (OptmouseInDown && !down)
+    {
+        Optclick = true;
+        OptmouseInDown = false;
+    }
+    else if (!OptmouseInDown && down)
+    {
+        Optclick = false;
+        OptmouseInDown = true;
+    }
+    else Optclick = false;
+
+    var optionsRect = new Rectangle(10, 10, 150, 40);
+    if (optionsOpened)
+    {   
+        g.FillRectangle(Brushes.LightGray, optionsRect);
+        g.DrawRectangle(Pens.Black, optionsRect);
+        g.DrawString("Opções", SystemFonts.CaptionFont, Brushes.Black, optionsRect, strFormat);
+        drawOptionsScreen(g, bmp, cursor, down);
+    }
+    else
+    {
+        if (optionsRect.Contains(cursor))
+        {
+            g.FillRectangle(Brushes.DarkGray, optionsRect);
+            g.DrawRectangle(Pens.Black, optionsRect);
+            g.DrawString("Opções", SystemFonts.CaptionFont, Brushes.White, optionsRect, strFormat);
+
+            if (Optclick)
+            {
+                optionsOpened = true;
+            }
+        }
+        else
+        {
+            g.FillRectangle(Brushes.LightGray, optionsRect);
+            g.DrawRectangle(Pens.Black, optionsRect);
+            g.DrawString("Opções", SystemFonts.CaptionFont, Brushes.Black, optionsRect, strFormat);
+        }
+    }
+}
+void drawOptionsScreen(Graphics g, Bitmap bmp, Point cursor, bool down)
+{
+    if (optionsTexture == null)
+        createTexture();
+    
+    var pageRect = new Rectangle(50, 50, bmp.Width - 100, bmp.Height - 100);
+    TextureBrush brush = new TextureBrush(optionsTexture);
+    g.FillRectangle(brush, pageRect);
+    g.DrawRectangle(Pens.Yellow, pageRect);
+
+    addOptionButton(g, "Salvar", new Rectangle(60, 60, 150, 50), cursor, () =>
+    {
+        game.Save();
+    });
+
+    addOptionButton(g, "Carregar", new Rectangle(60, 120, 150, 50), cursor, () =>
+    {
+        game.Load();
+        upgrades = Upgrade.All.Where(
+            u => !game.Upgrades.Exists(
+                v => u.GetType() == v.GetType()))
+            .ToList();
+    });
+
+    if (Optclick && !pageRect.Contains(cursor))
+    {
+        optionsOpened = false;
+    }
+}
+void createTexture()
+{
+    optionsTexture = Image.FromFile("res/opttexture.png") as Bitmap;
+}
+void addOptionButton(Graphics g, string text, Rectangle rect,
+    Point cursor, Action onClick)
+{
+    if (rect.Contains(cursor))
+    {
+        g.FillRectangle(Brushes.White, rect);
+        g.DrawRectangle(Pens.Black, rect);
+        g.DrawString(text, SystemFonts.CaptionFont, Brushes.Black, rect, strFormat);
+
+        if (Optclick)
+        {
+            onClick();
+        }
+    }
+    else
+    {
+        g.FillRectangle(Brushes.Black, rect);
+        g.DrawRectangle(Pens.White, rect);
+        g.DrawString(text, SystemFonts.CaptionFont, Brushes.White, rect, strFormat);
+    }
+}
+
 // Screen Implementation
 void start(Action<Form> create)
 {
@@ -237,6 +343,7 @@ void start(Action<Form> create)
     create(form);
     Application.Run(form);
 }
+
 
 start(form =>
 {
@@ -251,6 +358,7 @@ start(form =>
     Graphics g = null;
 
     Point cursor = Point.Empty;
+    bool cursorDown = false;
 
     Timer tm = new Timer();
     tm.Interval = 1000 / fps;
@@ -261,6 +369,7 @@ start(form =>
         g.Clear(Color.White);
         drawMainObject(g, bmp);
         drawShop(g, bmp, cursor);
+        drawButtonAndScreen(g, bmp, cursor, cursorDown);
         pb.Refresh();
     };
 
@@ -283,6 +392,8 @@ start(form =>
 
     pb.MouseClick += (o, e) =>
     {
+        if (optionsOpened)
+            return;
         if (mainObjectTestClick(e.Location, bmp))
         {
             mainObjectClick();
@@ -293,5 +404,15 @@ start(form =>
     pb.MouseMove += (o, e) =>
     {
         cursor = e.Location;
+    };
+
+    pb.MouseDown += delegate
+    {
+        cursorDown = true;
+    };
+
+    pb.MouseUp += delegate
+    {
+        cursorDown = false;
     };
 });
